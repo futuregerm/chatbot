@@ -1,12 +1,14 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 import { 
   Box, 
   TextField, 
   Button,
   Container,
-  IconButton,
-  Link
+  Link,
+  Alert
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LockIcon from '@mui/icons-material/Lock';
@@ -14,14 +16,22 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import styles from './Login.module.css';
 
 export default function Login() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [error, setError] = useState('');
   const [credentials, setCredentials] = useState({
-    username: '',
+    email: '',
     password: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempted with:', credentials);
+    try {
+      await login(credentials.email, credentials.password);
+      router.push('/dashboard'); // Redirect after successful login
+    } catch (error) {
+      setError('Failed to login. Please check your credentials.');
+    }
   };
 
   const handleChange = (e) => {
@@ -34,19 +44,22 @@ export default function Login() {
   return (
     <Container className={styles.container}>
       <Box className={styles.loginCard}>
-        {/* Top Icon */}
+        {error && <Alert severity="error" className={styles.alert}>{error}</Alert>}
         <Box className={styles.topIcon}>
           <PersonIcon className={styles.userIcon} />
         </Box>
-
-        {/* Form */}
+        <Box className={styles.iconGroup}>
+          <LockIcon className={styles.smallIcon} />
+          <VisibilityIcon className={styles.smallIcon} />
+        </Box>
         <Box component="form" onSubmit={handleSubmit} className={styles.form}>
           <TextField
             variant="outlined"
             fullWidth
-            placeholder="Username"
-            name="username"
-            value={credentials.username}
+            placeholder="Email"
+            name="email"
+            type="email"
+            value={credentials.email}
             onChange={handleChange}
             className={styles.input}
           />
