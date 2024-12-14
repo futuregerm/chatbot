@@ -1,13 +1,20 @@
 'use client';
-import { Button, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from './context/AuthContext';
 
 export default function Home() {
-  return (
-    <div>
-      <Typography variant="h1">Hello Material UI</Typography>
-      <Button variant="contained" color="primary">
-        Click me
-      </Button>
-    </div>
-  );
+  const router = useRouter();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  // Return null or a loading state while redirecting
+  return null;
 }
