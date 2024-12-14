@@ -1,5 +1,6 @@
+'use client';
 import "./globals.css";
-import ThemeRegistry from './components/ThemeRegistry';
+import ThemeRegistry from './styles/theme/ThemeRegistry';
 
 export default function RootLayout({ children }) {
   return (
